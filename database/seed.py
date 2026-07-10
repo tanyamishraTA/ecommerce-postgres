@@ -40,7 +40,7 @@ def random_date(start_days_ago: int = 730, end_days_ago: int = 0) -> datetime:
 # Seed functions
 
 def seed_categories(cur) -> list[int]:
-    print(f"  Seeding {NUM_CATEGORIES} categories …")
+    print(f"  Seeding {len(CATEGORY_NAMES)} categories …")
     ids = []
     for name in CATEGORY_NAMES:
         cur.execute(
@@ -48,7 +48,7 @@ def seed_categories(cur) -> list[int]:
             (name,)
         )
         ids.append(cur.fetchone()[0])
-    print(f"  ✓ {len(ids)} categories inserted.")
+    print(f"  {len(ids)} categories inserted.")
     return ids
 
 

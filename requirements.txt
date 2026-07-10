@@ -1,3 +1,6 @@
 Faker==40.28.1
-psycopg-binary
+psycopg2-binary
 python-dotenv==1.2.2
+fastapi
+uvicorn
+

@@ -5,8 +5,7 @@
 
 -- Before Index
 EXPLAIN ANALYZE
-SELECT *
-FROM orders
+SELECT * FROM orders
 WHERE customer_id = 100
 AND order_date >= '2025-01-01';
 
@@ -25,8 +24,7 @@ ON orders(customer_id, order_date);
 
 -- After Index
 EXPLAIN ANALYZE
-SELECT *
-FROM orders
+SELECT * FROM orders
 WHERE customer_id = 100
 AND order_date >= '2025-01-01';
 
@@ -71,8 +69,7 @@ ON products(category_id, price);
 
 -- After Index
 EXPLAIN ANALYZE
-SELECT *
-FROM products
+SELECT * FROM products
 WHERE category_id = 2
 AND price > 500;   
 
