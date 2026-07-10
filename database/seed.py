@@ -8,15 +8,14 @@ from connection import get_connection
 
 fake = Faker()
 
-# ── Volume config ──────────────────────────────────────────────────────────────
-NUM_CATEGORIES  = 10
+# Volume config 
 NUM_CUSTOMERS   = 500
 NUM_PRODUCTS    = 1_000
 NUM_ORDERS      = 5_000
 NUM_ORDER_ITEMS = 15_000
 NUM_PAYMENTS    = 5_000   # 1-to-1 with orders (UNIQUE constraint on order_id)
 
-# ── Domain data ────────────────────────────────────────────────────────────────
+# Domain data 
 CATEGORY_NAMES = [
     "Electronics", "Clothing", "Books", "Home & Kitchen",
     "Sports & Outdoors", "Beauty & Personal Care", "Toys & Games",
@@ -38,7 +37,7 @@ def random_date(start_days_ago: int = 730, end_days_ago: int = 0) -> datetime:
     return start + timedelta(seconds=random.randint(0, int(delta.total_seconds())))
 
 
-# ── Seed functions ─────────────────────────────────────────────────────────────
+# Seed functions
 
 def seed_categories(cur) -> list[int]:
     print(f"  Seeding {NUM_CATEGORIES} categories …")
@@ -84,7 +83,7 @@ def seed_customers(cur) -> list[int]:
         )
         ids.append(cur.fetchone()[0])
 
-    print(f"  ✓ {len(ids)} customers inserted.")
+    print(f"  {len(ids)} customers inserted.")
     return ids
 
 
@@ -112,7 +111,7 @@ def seed_products(cur, category_ids: list[int]) -> list[tuple[int, Decimal]]:
         pid = cur.fetchone()[0]
         products.append((pid, Decimal(str(price))))
 
-    print(f"  ✓ {len(products)} products inserted.")
+    print(f"  {len(products)} products inserted.")
     return products
 
 
@@ -140,7 +139,7 @@ def seed_orders(cur, customer_ids: list[int]) -> list[tuple[int, str]]:
         oid = cur.fetchone()[0]
         orders.append((oid, status))
 
-    print(f"  ✓ {len(orders)} orders inserted.")
+    print(f"  {len(orders)} orders inserted.")
     return orders
 
 
@@ -185,7 +184,7 @@ def seed_order_items(
 
         order_totals[order_id] = running_total
 
-    print(f"  ✓ {total_inserted} order items inserted.")
+    print(f"  {total_inserted} order items inserted.")
     return order_totals
 
 
@@ -196,7 +195,7 @@ def update_order_totals(cur, order_totals: dict[int, Decimal]) -> None:
             "UPDATE orders SET total_amount = %s WHERE order_id = %s;",
             (float(total), order_id)
         )
-    print(f"  ✓ {len(order_totals)} order totals updated.")
+    print(f"  {len(order_totals)} order totals updated.")
 
 
 def seed_payments(
@@ -241,11 +240,10 @@ def seed_payments(
         )
         inserted += 1
 
-    print(f"  ✓ {inserted} payments inserted.")
+    print(f"  {inserted} payments inserted.")
 
 
-# ── Main ───────────────────────────────────────────────────────────────────────
-
+# Main 
 def main() -> None:
     print("Connecting to database …")
     conn = get_connection()
@@ -253,14 +251,14 @@ def main() -> None:
     cur = conn.cursor()
 
     try:
-        print("\n── Truncating existing data ──────────────────────────────")
+        print("\n Truncating existing data ")
         # Truncate in reverse FK dependency order and restart sequences
         cur.execute("""
             TRUNCATE TABLE payments, order_items, orders, products, customers, categories
             RESTART IDENTITY CASCADE;
         """)
 
-        print("\n── Inserting seed data ───────────────────────────────────")
+        print("\n Inserting seed data")
         category_ids = seed_categories(cur)
         customer_ids = seed_customers(cur)
         products     = seed_products(cur, category_ids)
@@ -271,19 +269,19 @@ def main() -> None:
         seed_payments(cur, orders, order_totals)
 
         conn.commit()
-        print("\n✅  Seed completed successfully!\n")
+        print("\n  Seed completed successfully!\n")
 
-        # ── Quick row-count verification ───────────────────────────────────────
-        print("── Row counts ────────────────────────────────────────────")
+        # Quick row-count verification 
+        print("Row counts ")
         for table in ("categories", "customers", "products", "orders", "order_items", "payments"):
             cur.execute(f"SELECT COUNT(*) FROM {table};")
             count = cur.fetchone()[0]
-            print(f"  {table:<20} {count:>6} rows")
+            print(f" {table:<20} {count:>6} rows")
         print()
 
     except Exception as exc:
         conn.rollback()
-        print(f"\n❌  Seed failed — rolled back. Error: {exc}")
+        print(f"\n  Seed failed — rolled back. Error: {exc}")
         raise
     finally:
         cur.close()
