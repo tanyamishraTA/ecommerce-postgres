@@ -57,9 +57,7 @@ ecommerce-postgres/
 │   │   ├── create_tables.sql
 │   │   ├── indexes.sql
 │   │   └── optimization.sql
-│   │
-│   └── docs/
-│       └── er_diagram.md
+│      
 │       
 │
 ├── backend/
@@ -69,6 +67,7 @@ ecommerce-postgres/
 │    
 │
 └── screenshots/
+        └── er_diagram.md
 ```
 
 ---
